@@ -131,12 +131,14 @@ class SecurityValidator:
         r".*\.rar$",  # Archives (potentially dangerous)
     ]
 
-    def __init__(self, approved_directory: Path):
+    def __init__(self, approved_directory: Path, disable_path_validation: bool = False):
         """Initialize validator with approved directory."""
         self.approved_directory = approved_directory.resolve()
+        self.disable_path_validation = disable_path_validation
         logger.info(
             "Security validator initialized",
             approved_directory=str(self.approved_directory),
+            disable_path_validation=disable_path_validation,
         )
 
     def validate_path(
@@ -181,8 +183,8 @@ class SecurityValidator:
             # Resolve path and check boundaries
             target = target.resolve()
 
-            # Ensure target is within approved directory
-            if not self._is_within_directory(target, self.approved_directory):
+            # Ensure target is within approved directory (unless validation is disabled)
+            if not self.disable_path_validation and not self._is_within_directory(target, self.approved_directory):
                 logger.warning(
                     "Path traversal attempt detected",
                     requested_path=user_path,

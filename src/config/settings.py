@@ -100,6 +100,10 @@ class Settings(BaseSettings):
         default=False,
         description="Disable dangerous shell pattern checking (allows >, |, ; in commands)",
     )
+    disable_path_validation: bool = Field(
+        default=False,
+        description="Disable path validation (allows access to files outside approved directory)",
+    )
 
     # Rate limiting
     rate_limit_requests: int = Field(

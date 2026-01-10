@@ -120,7 +120,10 @@ async def create_application(config: Settings) -> Dict[str, Any]:
         raise ConfigurationError("No authentication providers configured")
 
     auth_manager = AuthenticationManager(providers)
-    security_validator = SecurityValidator(config.approved_directory)
+    security_validator = SecurityValidator(
+        config.approved_directory, 
+        disable_path_validation=config.disable_path_validation
+    )
     rate_limiter = RateLimiter(config)
 
     # Create audit storage and logger
