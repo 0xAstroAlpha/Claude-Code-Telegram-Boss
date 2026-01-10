@@ -288,9 +288,9 @@ async def handle_text_message(
                     reply_to_message_id=update.message.message_id if i == 0 else None,
                 )
 
-                # Small delay between messages to avoid rate limits
+                # Delay between messages to avoid Telegram rate limits
                 if i < len(formatted_messages) - 1:
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(1.5)
 
             except Exception as e:
                 logger.error(
@@ -573,7 +573,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 )
 
                 if i < len(formatted_messages) - 1:
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(1.5)
 
         except Exception as e:
             await claude_progress_msg.edit_text(
@@ -697,7 +697,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                     )
 
                     if i < len(formatted_messages) - 1:
-                        await asyncio.sleep(0.5)
+                        await asyncio.sleep(1.5)
 
             except Exception as e:
                 await claude_progress_msg.edit_text(
