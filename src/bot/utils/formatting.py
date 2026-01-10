@@ -756,6 +756,25 @@ def parse_claude_question(content: str) -> Optional[dict]:
                 'raw_match': match.group(0)
             }
     
+    # Pattern 3: Yes/No questions (Vietnamese and English)
+    # Matches: "Bạn có cho phép không?", "Do you allow?", "Can I...?", etc.
+    yesno_pattern = re.compile(
+        r'([^\n]*(?:bạn có|có cho phép|có muốn|có đồng ý|can i|may i|should i|do you|will you|is it ok|is that ok|would you allow)[^\n?]*\??)',
+        re.IGNORECASE
+    )
+    
+    match = yesno_pattern.search(content)
+    if match:
+        question = match.group(1).strip()
+        if not question.endswith('?'):
+            question += '?'
+        return {
+            'question': question,
+            'options': ['Có / Yes', 'Không / No'],
+            'raw_match': question,
+            'is_yesno': True
+        }
+    
     return None
 
 

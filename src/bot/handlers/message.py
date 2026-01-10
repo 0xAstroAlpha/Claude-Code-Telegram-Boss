@@ -139,6 +139,26 @@ async def handle_text_message(
     rate_limiter: Optional[RateLimiter] = context.bot_data.get("rate_limiter")
     audit_logger: Optional[AuditLogger] = context.bot_data.get("audit_logger")
 
+    # Check if this is a reply to a pending question
+    pending_question = context.user_data.get("pending_question")
+    awaiting_custom = context.user_data.get("awaiting_custom_answer", False)
+    
+    if pending_question or awaiting_custom:
+        # Clear the pending state
+        context.user_data["pending_question"] = None
+        context.user_data["awaiting_custom_answer"] = False
+        
+        logger.info(
+            "Processing reply to pending question",
+            user_id=user_id,
+            message=message_text[:50],
+            had_pending=bool(pending_question),
+            was_awaiting=awaiting_custom
+        )
+        
+        # Prepend context to indicate this is an answer
+        message_text = f"Trả lời cho câu hỏi: {message_text}"
+
     logger.info(
         "Processing text message", user_id=user_id, message_length=len(message_text)
     )
