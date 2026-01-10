@@ -96,6 +96,10 @@ class Settings(BaseSettings):
         default=["git commit", "git push"],
         description="List of explicitly disallowed Claude tools/commands",
     )
+    disable_dangerous_pattern_check: bool = Field(
+        default=False,
+        description="Disable dangerous shell pattern checking (allows >, |, ; in commands)",
+    )
 
     # Rate limiting
     rate_limit_requests: int = Field(

@@ -113,37 +113,38 @@ class ToolMonitor:
         if tool_name in ["bash", "shell", "Bash"]:
             command = tool_input.get("command", "")
 
-            # Check for dangerous commands
-            dangerous_patterns = [
-                "rm -rf",
-                "sudo",
-                "chmod 777",
-                "curl",
-                "wget",
-                "nc ",
-                "netcat",
-                ">",
-                ">>",
-                "|",
-                "&",
-                ";",
-                "$(",
-                "`",
-            ]
+            # Check for dangerous commands (can be disabled via config)
+            if not getattr(self.config, "disable_dangerous_pattern_check", False):
+                dangerous_patterns = [
+                    "rm -rf",
+                    "sudo",
+                    "chmod 777",
+                    "curl",
+                    "wget",
+                    "nc ",
+                    "netcat",
+                    ">",
+                    ">>",
+                    "|",
+                    "&",
+                    ";",
+                    "$(",
+                    "`",
+                ]
 
-            for pattern in dangerous_patterns:
-                if pattern in command.lower():
-                    violation = {
-                        "type": "dangerous_command",
-                        "tool_name": tool_name,
-                        "command": command,
-                        "pattern": pattern,
-                        "user_id": user_id,
-                        "working_directory": str(working_directory),
-                    }
-                    self.security_violations.append(violation)
-                    logger.warning("Dangerous command detected", **violation)
-                    return False, f"Dangerous command pattern detected: {pattern}"
+                for pattern in dangerous_patterns:
+                    if pattern in command.lower():
+                        violation = {
+                            "type": "dangerous_command",
+                            "tool_name": tool_name,
+                            "command": command,
+                            "pattern": pattern,
+                            "user_id": user_id,
+                            "working_directory": str(working_directory),
+                        }
+                        self.security_violations.append(violation)
+                        logger.warning("Dangerous command detected", **violation)
+                        return False, f"Dangerous command pattern detected: {pattern}"
 
         # Track usage
         self.tool_usage[tool_name] += 1
